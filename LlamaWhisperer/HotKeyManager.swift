@@ -79,12 +79,36 @@ class HotKeyManager: ObservableObject {
             let rawText = await transcriber.transcribe(fileURL: url)
             print("Raw transcription: \(rawText)")
 
+            guard !isSilence(rawText) else {
+                print("Recording sounded silent, nothing to paste")
+                isTranscribing = false
+                return
+            }
+
             let cleanedText = await cleanupService.cleanup(text: rawText)
             print("Cleaned text: \(cleanedText)")
 
             pasteText(cleanedText)
             isTranscribing = false
         }
+    }
+
+    /// Whisper hallucinates on silent audio: annotations like "[BLANK_AUDIO]"
+    /// or "(silence)", and repeated filler words like "you". Treat those
+    /// transcripts as silence so we never paste junk.
+    private func isSilence(_ text: String) -> Bool {
+        let stripped = text.replacingOccurrences(
+            of: "\\[[^\\]]*\\]|\\([^)]*\\)",
+            with: "",
+            options: .regularExpression
+        )
+
+        let words = stripped
+            .lowercased()
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .filter { !$0.isEmpty }
+
+        return words.isEmpty || words.allSatisfy { $0 == "you" }
     }
 
     private func pasteText(_ text: String) {

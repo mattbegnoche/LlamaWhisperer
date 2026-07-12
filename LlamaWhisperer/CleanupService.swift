@@ -8,7 +8,7 @@
 import Foundation
 
 class CleanupService {
-    private let endpoint = URL(string: "http://localhost:11434/api/generate")!
+    private let endpoint = URL(string: "http://127.0.0.1:11434/api/generate")!
     private let model = "llama3.2:3b"
 
     func cleanup(text: String) async -> String {
