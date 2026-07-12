@@ -11,8 +11,19 @@ import SwiftUI
 struct LlamaWhispererApp: App {
     @StateObject private var hotKeyManager = HotKeyManager()
 
+    private var menuBarIcon: String {
+        if hotKeyManager.isRecording { return "mic.circle.fill" }
+        if hotKeyManager.isTranscribing { return "hourglass" }
+        if hotKeyManager.ollamaIsDown { return "exclamationmark.triangle.fill" }
+        return "mic.fill"
+    }
+
     var body: some Scene {
-        MenuBarExtra("llamaWhisperer", systemImage: hotKeyManager.isRecording ? "mic.circle.fill" : (hotKeyManager.isTranscribing ? "hourglass" : "mic.fill")) {
+        MenuBarExtra("llamaWhisperer", systemImage: menuBarIcon) {
+            if hotKeyManager.ollamaIsDown {
+                Text("⚠️ Ollama not running — pasting raw transcripts")
+                Divider()
+            }
             Button("Start Recording") {
                 hotKeyManager.toggleRecording()
             }

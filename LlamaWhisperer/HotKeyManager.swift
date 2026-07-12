@@ -23,6 +23,7 @@ class HotKeyManager: ObservableObject {
     private var audioRecorder: AVAudioRecorder?
     @Published private(set) var isRecording = false
     @Published private(set) var isTranscribing = false
+    @Published private(set) var ollamaIsDown = false
     private let transcriber = Transcriber()
 
     init() {
@@ -85,10 +86,18 @@ class HotKeyManager: ObservableObject {
                 return
             }
 
-            let cleanedText = await cleanupService.cleanup(text: rawText)
-            print("Cleaned text: \(cleanedText)")
+            let textToPaste: String
+            switch await cleanupService.cleanup(text: rawText) {
+            case .cleaned(let cleaned):
+                ollamaIsDown = false
+                textToPaste = cleaned
+            case .ollamaUnavailable(let raw):
+                ollamaIsDown = true
+                textToPaste = raw
+            }
+            print("Pasting: \(textToPaste)")
 
-            pasteText(cleanedText)
+            pasteText(textToPaste)
             isTranscribing = false
         }
     }
