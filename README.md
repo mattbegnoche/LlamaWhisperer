@@ -1,6 +1,6 @@
 # LlamaWhisperer
 
-llamaWhisperer is a macOS menu bar application that provides speech-to-text functionality using Whisper and Ollama. It allows you to quickly record audio, transcribe it, and paste the results directly into any application.
+LlamaWhisperer is a macOS menu bar application that provides speech-to-text functionality using Whisper and Ollama. It allows you to quickly record audio, transcribe it, and paste the results directly into any application.
 
 ## Features
 
