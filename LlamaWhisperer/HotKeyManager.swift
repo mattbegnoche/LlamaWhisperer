@@ -84,20 +84,11 @@ class HotKeyManager: ObservableObject {
             let cleanupEnabled = UserDefaults.standard.object(forKey: "cleanupEnabled") as? Bool ?? true
 
             let textToPaste: String
-            var cleanedText: String? = nil
-            
             if cleanupEnabled {
-                // Get the selected model from preferences
-                let selectedModel = UserDefaults.standard.string(forKey: "selectedModel") ?? "llama3.2:3b"
-                
-                // Set the model in cleanup service
-                cleanupService.setModel(selectedModel)
-                
                 switch await cleanupService.cleanup(text: rawText) {
                 case .cleaned(let cleaned):
                     ollamaIsDown = false
                     textToPaste = cleaned
-                    cleanedText = cleaned
                 case .ollamaUnavailable(let raw):
                     ollamaIsDown = true
                     textToPaste = raw
@@ -107,7 +98,7 @@ class HotKeyManager: ObservableObject {
                 ollamaIsDown = false
                 textToPaste = rawText
             }
-            
+
             print("Pasting: \(textToPaste)")
             pasteText(textToPaste)
             isTranscribing = false
