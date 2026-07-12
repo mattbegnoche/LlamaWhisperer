@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Xcode per-user state (window layouts, breakpoints, schemes)
+xcuserdata/
+
+# Xcode build artifacts
+DerivedData/
+build/
+
+# Whisper model — too large for GitHub (141MB > 100MB limit).
+# Download with:
+#   curl -L -o LlamaWhisperer/ggml-base.en.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
+*.bin
