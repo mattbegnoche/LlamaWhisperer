@@ -2,13 +2,6 @@
 //  HotKeyManager.swift
 //  llamaWhisperer
 //
-//  Created by Matt Begnoche on 7/11/26.
-//
-
-//
-//  HotKeyManager.swift
-//  llamaWhisperer
-//
 
 import Foundation
 import AVFoundation
@@ -91,11 +84,20 @@ class HotKeyManager: ObservableObject {
             let cleanupEnabled = UserDefaults.standard.object(forKey: "cleanupEnabled") as? Bool ?? true
 
             let textToPaste: String
+            var cleanedText: String? = nil
+            
             if cleanupEnabled {
+                // Get the selected model from preferences
+                let selectedModel = UserDefaults.standard.string(forKey: "selectedModel") ?? "llama3.2:3b"
+                
+                // Set the model in cleanup service
+                cleanupService.setModel(selectedModel)
+                
                 switch await cleanupService.cleanup(text: rawText) {
                 case .cleaned(let cleaned):
                     ollamaIsDown = false
                     textToPaste = cleaned
+                    cleanedText = cleaned
                 case .ollamaUnavailable(let raw):
                     ollamaIsDown = true
                     textToPaste = raw
@@ -105,8 +107,8 @@ class HotKeyManager: ObservableObject {
                 ollamaIsDown = false
                 textToPaste = rawText
             }
+            
             print("Pasting: \(textToPaste)")
-
             pasteText(textToPaste)
             isTranscribing = false
         }
@@ -134,15 +136,6 @@ class HotKeyManager: ObservableObject {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.setString(text, forType: .string)
-
-        let source = CGEventSource(stateID: .combinedSessionState)
-        let keyDown = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: true)
-        keyDown?.flags = .maskCommand
-        let keyUp = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: false)
-        keyUp?.flags = .maskCommand
-
-        keyDown?.post(tap: .cghidEventTap)
-        keyUp?.post(tap: .cghidEventTap)
     }
 
     private func recordingURL() -> URL {

@@ -2,8 +2,6 @@
 //  LlamaWhispererApp.swift
 //  llamaWhisperer
 //
-//  Created by Matt Begnoche on 7/11/26.
-//
 
 import SwiftUI
 
@@ -46,4 +44,3 @@ struct LlamaWhispererApp: App {
         }
     }
 }
-
