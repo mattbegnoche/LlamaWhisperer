@@ -86,14 +86,24 @@ class HotKeyManager: ObservableObject {
                 return
             }
 
+            // Default to true when the preference has never been set —
+            // bool(forKey:) alone would report false for a missing key.
+            let cleanupEnabled = UserDefaults.standard.object(forKey: "cleanupEnabled") as? Bool ?? true
+
             let textToPaste: String
-            switch await cleanupService.cleanup(text: rawText) {
-            case .cleaned(let cleaned):
+            if cleanupEnabled {
+                switch await cleanupService.cleanup(text: rawText) {
+                case .cleaned(let cleaned):
+                    ollamaIsDown = false
+                    textToPaste = cleaned
+                case .ollamaUnavailable(let raw):
+                    ollamaIsDown = true
+                    textToPaste = raw
+                }
+            } else {
+                // Cleanup intentionally off: paste raw and clear any warning.
                 ollamaIsDown = false
-                textToPaste = cleaned
-            case .ollamaUnavailable(let raw):
-                ollamaIsDown = true
-                textToPaste = raw
+                textToPaste = rawText
             }
             print("Pasting: \(textToPaste)")
 

@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct LlamaWhispererApp: App {
     @StateObject private var hotKeyManager = HotKeyManager()
+    @Environment(\.openSettings) private var openSettings
 
     private var menuBarIcon: String {
         if hotKeyManager.isRecording { return "mic.circle.fill" }
@@ -28,9 +29,20 @@ struct LlamaWhispererApp: App {
                 hotKeyManager.toggleRecording()
             }
             Divider()
+            Button("Settings…") {
+                // LSUIElement apps aren't "active", so the window would
+                // open behind others without this activation call.
+                NSApplication.shared.activate(ignoringOtherApps: true)
+                openSettings()
+            }
+            .keyboardShortcut(",")
             Button("Quit") {
                 NSApplication.shared.terminate(nil)
             }
+        }
+
+        Settings {
+            SettingsView()
         }
     }
 }
