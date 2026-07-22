@@ -1,5 +1,7 @@
 # LlamaWhisperer
 
+<img src="docs/app-icon.png" width="128" alt="LlamaWhisperer icon" />
+
 A macOS menu bar dictation app that runs **100% locally** — no cloud APIs, no subscriptions, works offline.
 
 Press a hotkey, speak, press it again: your words are transcribed by [Whisper](https://github.com/ggerganov/whisper.cpp), cleaned up by a local LLM via [Ollama](https://ollama.com) (punctuation, capitalization, filler-word removal), and pasted straight into whatever app has focus.
